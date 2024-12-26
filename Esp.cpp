@@ -6,8 +6,7 @@ DWORD posOffset = 336;
 DWORD healthOffset = 1912;
 DWORD nameOffset = 1512;
 DWORD teamIDOffset = 1552;
-DWORD statusOffset = 868;
-DWORD poseOffset = 288;
+
 
 
 
@@ -165,53 +164,7 @@ void Esp::scanEntityList(){
  
 			Entities[i].itemId = get<int>(get<DWORD>(get<DWORD>(entityAddv + 0xC) + 0xA8) + 0x2F4);
 			
-			if(Entities[i].itemType == 0){ 
-				std::cout << termcolor::green << entityClassName << " " << termcolor::red << entityAddv << " " << termcolor::yellow << Entities[i].itemId << termcolor::reset << "\n";
-			}
-	 
 
-			//std::string entityClassName = GetEntityClassName(gNames, entityStruct);
-		}
-	 
-		// VEHICLE
-		if(Entities[i].isVehicle){
-			 
-		 
-		}
-		 
-		// BOX
-		if(Entities[i].isBox ){
-			Entities[i].isBox = true;
-			int boxItemCount;
-			boxItemCount = get<int>(entityAddv + 1088);
-	 
-			if(boxItemCount < 60){
-				DWORD itemEntry = get<DWORD>( entityAddv + 1084);
-				//std::cout << std::hex << itemEntry << "\n";
-				if(itemEntry > 50000){
-					long itemAddv, itemID, itemCount;
-					Entities[i].BoxItemLength = 0;
-					for(int h = 0; h < boxItemCount; h++){
-						itemAddv = itemEntry + h * 48;
-						itemID = get<int>( itemAddv + 52);
-						itemID = get<int>( itemAddv + 0x4);
-						if(itemID > 0){
-							itemCount = get<int>(itemAddv + 72);
-							itemCount = get<int>(itemAddv + 0x18); 
-							if(itemCount > 0){ 
-								Entities[i].addBoxItem(itemID, itemCount);   
-							} 
-						}
-					}
-				}
-			}
-		}
-		 
-		// PLAYER
-		if(Entities[i].isPlayer){
-			if(Entities[i].entityAddv != entityAddv){
-				Entities[i].playerWorld = get<DWORD>(entityAddv + 312); 
-				// Entities[i].setPlayerName(Entities[i].isRobot ? "_bot_" : pname); 
 			}
 
 			DWORD ws = get<DWORD>(entityAddv + 300);
@@ -276,15 +229,7 @@ void Esp::scanEntityList(){
 
 void Esp::scanEntityPositions(){
 	bestCloseEnemyDistance = 500;
-	for(int i = 0; i < entityCount; i++){ 
-		DWORD azxs = get<DWORD>(Entities[i].entityAddv + 312);
-		Entities[i].position = get<Vector3>( azxs + posOffset); 
-		if(Entities[i].isVehicle){
-			DWORD vehicleDynamics = get<DWORD>(get<DWORD>(Entities[i].entityAddv + 0x54) + 0x4D8);
-			Entities[i].setMaxHealth(get<float>(vehicleDynamics + 0x108));
-			Entities[i].setCurHealth(get<float>(vehicleDynamics + 0x10C));
-			Entities[i].setMaxGallon(get<float>(vehicleDynamics + 0x108 + 0x18));
-			Entities[i].setCurGallon(get<float>(vehicleDynamics + 0x10C + 0x18));
+	
 		}
 		if(Entities[i].isPlayer){ 
 			float playerHp = get<int>(entityAddv + healthOffset);
@@ -480,20 +425,7 @@ void Esp::Init(){
 
 	for(int i = 0; i < MAX_ENTITY; i++){
 		Entities[i] = Entity();
-		Entities[i].index = i;
-	}
 
-	textEnemyCount.setCharacterSize(24);
-	textEnemyCount.setColor(sf::Color::Color(242, 0, 46, 255)); 
-	textEnemyCount.setFont(g_pEntityClasses->Fonts[2]);
-	textEnemyCount.setPosition(320, 150);
-	textEnemyCount.setOutlineColor(sf::Color::Color(0, 0, 0, 150));
-	textEnemyCount.setOutlineThickness(2);
-
-	sf::SoundBuffer bufferEnemyCount; 
-	soundEnemyCount.openFromFile(g_pEntityClasses->filePath("/assets/audio/enemycount.wav"));
-	soundEnemyCount.setVolume(40);  
-	soundEnemyCount.play();  
 	 
  
  
